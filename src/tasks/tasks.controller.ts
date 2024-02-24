@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { Task, TaskStatus } from './task.model';
 import { TasksService } from './tasks.service';
 
@@ -18,8 +19,15 @@ export class TasksController {
 
   @Get()
   //   similar name 'getAllTasks()' (as in tasks.service and tasks.conroller ) is not mandatory
-  getAllTasks(): Task[] {
-    return this.tasksService.getAllTasks();
+  getTasks(@Query() filterDto: GetTasksFilterDto): Task[] {
+    // if any filters defined, call tasksService.getTasksWithFilters
+    // otherwise, just get all tasks
+
+    if (Object.keys(filterDto).length) {
+      return this.tasksService.getTasksWithFIlters(filterDto);
+    } else {
+      return this.tasksService.getAllTasks();
+    }
   }
 
   @Get('/:id')
