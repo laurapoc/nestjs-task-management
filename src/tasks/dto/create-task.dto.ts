@@ -6,4 +6,7 @@ export class CreateTaskDto {
 
   @IsNotEmpty()
   description: string;
+
+  // without @IsNotEmpty() decorator it can be empty value
+  subtitle
 }
