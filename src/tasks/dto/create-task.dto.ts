@@ -8,5 +8,5 @@ export class CreateTaskDto {
   description: string;
 
   // without @IsNotEmpty() decorator it can be empty value
-  subtitle
+  subtitle: string;
 }
