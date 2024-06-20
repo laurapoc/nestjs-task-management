@@ -13,68 +13,43 @@ export class TasksService {
     private tasksRepository: TasksRepository,
   ) {}
 
-  // getAllTasks(): Task[] {
-  //   return this.tasks;
-  // }
-  // getTasksWithFIlters(filterDto: GetTasksFilterDto): Task[] {
-  //   const { status, search } = filterDto;
-  //   // define temporary array to hold the resul
-  //   let tasks = this.getAllTasks();
-  //   // do smth with status
-  //   if (status) {
-  //     tasks = tasks.filter((task) => task.status === status);
-  //   }
-  //   // do smth with search
-  //   if (search) {
-  //     tasks = tasks.filter((task) => {
-  //       if (task.title.includes(search) || task.description.includes(search)) {
-  //         return true;
-  //       }
-  //       return false;
-  //     });
-  //   }
-  //   // return final result
-  //   return tasks;
+  // // MY WORKING SOLUTION:
+  // async getAllTasks(): Promise<Task[]> {
+  //   return this.tasksRepository.find();
   // }
 
+  getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.tasksRepository.getTasks(filterDto);
+  }
+
   async getTaskById(id: string): Promise<Task> {
-    const found = await this.tasksRepository.findOne({where: {id}});
+    const found = await this.tasksRepository.findOne({ where: { id } });
 
     if (!found) {
       throw new NotFoundException(`Task with ID ${id} not found`);
     }
     return found;
   }
-  // getTaskById(id: string): Task {
-  //   // try to get task
-  //   // if not found, throw an error (404 not found)
-  //   // otherwise, return the found task
-  //   const found = this.tasks.find((task) => task.id === id);
-  //   if (!found) {
-  //     // if no message is passed as a parameter, then only 404 not found is returned from response
-  //     throw new NotFoundException(`Task with ${id} not found`);
-  //   }
-  //   return found;
-  // }
-  // createTask(createTaskDto: CreateTaskDto): Task {
-  //   const { title, description, subtitle } = createTaskDto;
-  //   const task: Task = {
-  //     id: uuid(),
-  //     title,
-  //     description,
-  //     status: TaskStatus.OPEN,
-  //     subtitle,
-  //   };
-  //   this.tasks.push(task);
-  //   return task;
-  // }
-  // deleteTask(id: string): void {
-  //   const found = this.getTaskById(id)
-  //   this.tasks = this.tasks.filter((task) => task.id !== found.id);
-  // }
-  // updateTaskStatus(id: string, status: TaskStatus) {
-  //   const task = this.getTaskById(id);
-  //   task.status = status;
-  //   return task;
-  // }
+
+  createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+    return this.tasksRepository.CreateTask(createTaskDto);
+  }
+
+  async deleteTask(id: string): Promise<void> {
+    // with the delete method there is no need to call addition method to get data object,
+    // while remove() method requires to call additional method to get data object.
+    const result = await this.tasksRepository.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Task with ID ${id} does not exist`);
+    }
+  }
+
+  async updateTaskStatus(id: string, status: TaskStatus): Promise<Task> {
+    const task = await this.getTaskById(id);
+    task.status = status;
+    this.tasksRepository.save(task);
+
+    return task;
+  }
 }
