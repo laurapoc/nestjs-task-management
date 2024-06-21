@@ -11,7 +11,6 @@ import {
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
-import { TaskStatus } from './task-status.enum.ts';
 import { Task } from './task.entity';
 import { TasksService } from './tasks.service';
 
@@ -19,12 +18,13 @@ import { TasksService } from './tasks.service';
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
-  @Get()
+  // MY WORKING SOLUTION:
+  // @Get()
   // getAllTasks(@Query() _): Promise<Task[]> {
   //   return this.tasksService.getAllTasks();
   // }
 
-  // @Get()
+  @Get()
   getTasks(@Query() filterDto: GetTasksFilterDto): Promise<Task[]> {
     return this.tasksService.getTasks(filterDto);
   }
