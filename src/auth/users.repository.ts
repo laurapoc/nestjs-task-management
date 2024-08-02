@@ -18,7 +18,6 @@ export class UsersRepository extends Repository<User> {
       password,
     });
 
-    console.log(user);
     await this.save(user);
   }
 }
