@@ -71,3 +71,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## POSSIBLE BROBLEMS OF SERVER RUNNING:
+
+- node version might be not compatable - try to change it with command: 'nvm use versionNUmber' (ex. nvm use v21.6.1)
