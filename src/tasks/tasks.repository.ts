@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { User } from 'src/auth/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -8,6 +12,7 @@ import { Task } from './task.entity';
 
 @Injectable()
 export class TasksRepository extends Repository<Task> {
+  private logger = new Logger('TasksRepository', { timestamp: true });
   constructor(private dataSource: DataSource) {
     super(Task, dataSource.createEntityManager());
   }
@@ -27,8 +32,15 @@ export class TasksRepository extends Repository<Task> {
         { search: `%${search}%` }, // % means that we can search only part of a word - not exact word and it will work
       );
     }
-
-    return query.getMany();
+    try {
+      return await query.getMany();
+    } catch (error) {
+      this.logger.error(
+        `Failed to get tasks for user "${user.username}", Filters: ${JSON.stringify(filterDto)}.`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async CreateTask(createTaskDto: CreateTaskDto, user: User): Promise<Task> {
